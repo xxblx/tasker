@@ -19,7 +19,7 @@ class ApiFolderHandler(ApiHandler):
         self.write({'folders': [dict(zip(desc, item)) for item in _res]})
 
     async def post(self, project_pub_id):
-        """ Create a new folder"""
+        """ Create a new folder """
         title = self.get_argument('title')
         project_id = self.current_user['project_id']
         seq_pf = Identifier('project_folder_{}_seq'.format(project_id))
@@ -29,7 +29,3 @@ class ApiFolderHandler(ApiHandler):
                     SQL(InsertQueries.add_folder).format(seq=seq_pf),
                     (title, project_id)
                 )
-
-
-class ApiFolderIdHandler(ApiHandler):
-    pass

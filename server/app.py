@@ -8,7 +8,7 @@ import tornado.web
 from .conf import DEBUG, TOKEN_EXPIRES_TIME, WORKERS, DB_SETTINGS
 from .handlers.api.tokens import GetTokensHandler, RenewTokensHandler
 from .handlers.api.projects import ApiProjectHandler, ApiProjectIdHandler
-from .handlers.api.folders import ApiFolderHandler, ApiFolderIdHandler
+from .handlers.api.folders import ApiFolderHandler
 
 
 class ServerApp(tornado.web.Application):
@@ -27,7 +27,6 @@ class ServerApp(tornado.web.Application):
             (r'/api/project/([0-9]*/?)', ApiProjectIdHandler),
 
             (r'/api/folder/([0-9]*/?)', ApiFolderHandler),
-            (r'/api/folder/([0-9]*)/([0-9]*/?)', ApiFolderIdHandler),
 
             (r'/api/task/([0-9]*)/([0-9]*/?)', None),
             (r'/api/task/([0-9]*)/([0-9]*)/([0-9]*/?)', None)
