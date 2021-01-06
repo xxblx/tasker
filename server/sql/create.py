@@ -132,13 +132,13 @@ CREATE TABLE IF NOT EXISTS tasker.tasks(
     task_pub_id INT,
     title TEXT,
     description TEXT DEFAULT NULL,
-    datetime_from TIMESTAMP DEFAULT NULL,
-    datetime_due TIMESTAMP DEFAULT NULL,
+    datetime_from INT DEFAULT NULL,
+    datetime_due INT DEFAULT NULL,
     user_id INT,
     project_id INT,
     folder_id INT,
-    created TIMESTAMP,
-    edited TIMESTAMP,
+    created INT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP),
+    edited INT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP),
     PRIMARY KEY(task_id),
     CONSTRAINT fk_task_user
         FOREIGN KEY(user_id)

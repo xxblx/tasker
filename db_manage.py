@@ -56,6 +56,21 @@ def create_user(username):
                 SQL(InsertQueries.add_folder).format(seq=seq_pf),
                 ('My Tasks', project_id)
             )
+            folder_id = cur.fetchall()[0][0]
+            # Create a few demo tasks
+            for i in range(3):
+                args = (
+                    'Demo task {}'.format(i+1),  # title
+                    'This is a description of Task #{}'.format(i+1),
+                    None, None,  # datetime_from, datetime_due
+                    user_id,
+                    project_id,
+                    folder_id
+                )
+                cur.execute(
+                    SQL(InsertQueries.add_task).format(seq=seq_pt),
+                    args
+                )
 
 
 def delete_user(username):

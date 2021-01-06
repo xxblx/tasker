@@ -27,6 +27,40 @@ FROM
 WHERE 
     pu.user_id = %s and projects.project_pub_id = %s
 """
+    project_folder_access = """
+SELECT
+    projects.project_id, pu.role
+FROM
+    tasker.projects_users pu
+    INNER JOIN
+    tasker.projects on pu.project_id = projects.project_id
+    
+    INNER JOIN
+    tasker.folders on pu.project_id = folders.project_id
+WHERE
+    pu.user_id = %s 
+    and projects.project_pub_id = %s
+    and folders.folder_pub_id = %s
+"""
+    project_folder_task_access = """
+SELECT
+    projects.project_id, pu.role
+FROM
+    tasker.projects_users pu
+    INNER JOIN
+    tasker.projects on pu.project_id = projects.project_id
+    
+    INNER JOIN
+    tasker.folders on pu.project_id = folders.project_id
+    
+    INNER JOIN
+    tasker.tasks on pu.project_id = tasks.project_id
+WHERE
+    pu.user_id = %s 
+    and projects.project_pub_id = %s
+    and folders.folder_pub_id = %s
+    and tasks.task_pub_id = %s
+"""
     # List projects available for a user
     projects = """
 SELECT 
@@ -58,7 +92,7 @@ SELECT
     t.edited
 FROM
     tasker.tasks t 
-    INNER JOIN tasker.folders f on t.folder_in = f.folder_id
+    INNER JOIN tasker.folders f on t.folder_id = f.folder_id
     INNER JOIN tasker.projects p on t.project_id = p.project_id
 WHERE
     t.project_id = %s and f.folder_pub_id = %s
@@ -77,7 +111,7 @@ SELECT
     )) tasks
 FROM
     tasker.tasks t 
-    INNER JOIN tasker.folders f on t.folder_in = f.folder_id
+    INNER JOIN tasker.folders f on t.folder_id = f.folder_id
     INNER JOIN tasker.projects p on t.project_id = p.project_id
 WHERE
     t.project_id = %s

@@ -10,6 +10,14 @@ RETURNING project_id
     add_folder = """
 INSERT INTO tasker.folders(folder_pub_id, title, project_id)
 VALUES(nextval('tasker.{seq}'), %s, %s)
+RETURNING folder_id
+"""
+    add_task = """
+INSERT INTO tasker.tasks(
+    task_pub_id, title, description, datetime_from, datetime_due,
+    user_id, project_id, folder_id
+)
+VALUES(nextval('tasker.{seq}'), %s, %s, %s, %s, %s, %s, %s)
 """
     add_user_project = """
 INSERT INTO tasker.projects_users(project_id, user_id, role) VALUES(%s, %s, %s)
