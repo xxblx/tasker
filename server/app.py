@@ -9,7 +9,8 @@ from .conf import DEBUG, TOKEN_EXPIRES_TIME, WORKERS, DB_SETTINGS
 from .handlers.api.tokens import GetTokensHandler, RenewTokensHandler
 from .handlers.api.projects import ApiProjectHandler, ApiProjectIdHandler
 from .handlers.api.folders import ApiFolderHandler
-from .handlers.api.tasks import ApiTaskFolderHandler, ApiTaskProjectHandler
+from .handlers.api.tasks import ApiTaskFolderHandler, ApiTaskProjectHandler, \
+    ApiTaskHandler
 
 
 class ServerApp(tornado.web.Application):
@@ -31,7 +32,7 @@ class ServerApp(tornado.web.Application):
 
             (r'/api/task/([0-9]*/?)', ApiTaskProjectHandler),
             (r'/api/task/([0-9]*)/([0-9]*/?)', ApiTaskFolderHandler),
-            (r'/api/task/([0-9]*)/([0-9]*)/([0-9]*/?)', None)
+            (r'/api/task/([0-9]*)/([0-9]*)/([0-9]*/?)', ApiTaskHandler)
         ]
         #template_path = os.path.join(os.path.dirname(__file__), 'templates')
         #static_path = os.path.join(os.path.dirname(__file__), 'static')

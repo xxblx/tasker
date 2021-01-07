@@ -120,6 +120,26 @@ FROM
 WHERE
     t.project_id = %s
 """
+    task = """
+SELECT
+    t.task_pub_id id,
+    p.project_pub_id project_id,
+    f.folder_pub_id folder_id,
+    t.title,
+    t.description,
+    t.datetime_from,
+    t.datetime_due,
+    t.created,
+    t.edited,
+    u.username
+FROM
+    tasker.tasks t
+    INNER JOIN tasker.folders f on t.folder_id = f.folder_id
+    INNER JOIN tasker.projects p on t.project_id = p.project_id
+    INNER JOIN tasker.users u on t.user_id = u.user_id
+WHERE
+    t.project_id = %s and f.folder_id = %s and t.task_id = %s
+"""
     # Get project details
     # TODO: remove user_id because by the time of the query execution
     # TODO: the ApiHandler has checked the user access already

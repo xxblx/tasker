@@ -39,3 +39,16 @@ class ApiTaskProjectHandler(ApiHandler):
                 _res = await cur.fetchall()
                 desc = [item.name for item in cur.description]
         self.write({'tasks': [dict(zip(desc, item)) for item in _res]})
+
+
+class ApiTaskHandler(ApiHandler):
+    async def get(self, project_pub_id, folder_pub_id, task_pub_id):
+        args = [
+            self.current_user[k] for k in ('project_id', 'folder_id', 'task_id')
+        ]
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(SelectQueries.task, args)
+                _res = await cur.fetchall()
+                desc = [item.name for item in cur.description]
+        self.write(dict(zip(desc, _res[0])))
