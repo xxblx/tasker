@@ -18,6 +18,7 @@ INSERT INTO tasker.tasks(
     user_id, project_id, folder_id
 )
 VALUES(nextval('tasker.{seq}'), %s, %s, %s, %s, %s, %s, %s)
+RETURNING task_pub_id
 """
     add_user_project = """
 INSERT INTO tasker.projects_users(project_id, user_id, role) VALUES(%s, %s, %s)
