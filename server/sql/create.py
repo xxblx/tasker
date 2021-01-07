@@ -36,6 +36,21 @@ BEGIN
 END;
     $$ LANGUAGE plpgsql strict immutable;
 """
+    task_update_edited = """
+CREATE OR REPLACE FUNCTION tasker.task_update_edited() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.edited = EXTRACT(EPOCH FROM CURRENT_TIMESTAMP);
+    RETURN NEW;   
+END;
+    $$ language plpgsql strict;
+"""
+
+
+class CreateTriggerQueries(CreateQueries):
+    task_update = """
+CREATE TRIGGER task_update BEFORE UPDATE on tasker.tasks
+FOR EACH ROW EXECUTE PROCEDURE tasker.task_update_edited()
+"""
 
 
 class CreateSequenceQueries(CreateQueries):
