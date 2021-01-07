@@ -102,21 +102,17 @@ WHERE
 SELECT
     p.project_pub_id project_id,
     f.folder_pub_id folder_id,
-    json_agg(json_build_object(
-        'id', t.task_pub_id, 
-        'title', t.title,
-        'datetime_from', t.datetime_from,
-        'datetime_due', t.datetime_due,
-        'edited', t.edited
-    )) tasks
+    t.task_pub_id id,
+    t.title,
+    t.datetime_from,
+    t.datetime_due,
+    t.edited
 FROM
     tasker.tasks t 
     INNER JOIN tasker.folders f on t.folder_id = f.folder_id
     INNER JOIN tasker.projects p on t.project_id = p.project_id
 WHERE
     t.project_id = %s
-GROUP BY
-    1, 2
 """
     # Get project details
     # TODO: remove user_id because by the time of the query execution
