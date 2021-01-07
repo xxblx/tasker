@@ -101,7 +101,7 @@ FROM
     INNER JOIN tasker.folders f on t.folder_id = f.folder_id
     INNER JOIN tasker.projects p on t.project_id = p.project_id
 WHERE
-    t.project_id = %s and f.folder_pub_id = %s
+    t.project_id = %s and f.folder_id = %s
 """
     # List tasks in a project
     tasks_by_project = """

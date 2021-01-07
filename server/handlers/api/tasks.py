@@ -12,7 +12,8 @@ class ApiTaskFolderHandler(ApiHandler):
             async with conn.cursor() as cur:
                 await cur.execute(
                     SelectQueries.tasks_by_folder,
-                    (self.current_user['project_id'], folder_pub_id)
+                    (self.current_user['project_id'],
+                     self.current_user['folder_id'])
                 )
                 _res = await cur.fetchall()
                 desc = [item.name for item in cur.description]
