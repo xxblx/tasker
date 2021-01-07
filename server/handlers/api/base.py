@@ -58,6 +58,8 @@ class BaseApiHandler(BaseHandler):
 
 
 class ApiHandler(BaseApiHandler):
+    _access_check = ('folder', 'task', 'project')
+
     async def prepare(self):
         self.current_user = None
         try:
@@ -79,25 +81,48 @@ class ApiHandler(BaseApiHandler):
                 check_token = True
         if not check_token:
             raise tornado.web.HTTPError(403, 'invalid tokens')
-
         current_user = {
             'user_id': user_id,
             # TODO: do i need username and token select here? not sure
             'username': username,
             'token_select': token_select
         }
-        # Check access to the project
+
+        # Check access to project and verify project, folder and task ids
         uri_list = self.request.uri.strip('/').split('/')
-        if uri_list[1] in ('folder', 'task', 'project') and len(uri_list) > 2:
-            async with self.db_pool.acquire() as conn:
-                async with conn.cursor() as cur:
-                    await cur.execute(
-                        SelectQueries.project_access, (user_id, uri_list[2])
-                    )
-                    _res = await cur.fetchall()
-            if not _res:
-                raise tornado.web.HTTPError(404)
-            project_id, role = _res[0]
-            current_user['project_id'] = project_id
-            current_user['role'] = role
+        uri_len = len(uri_list)
+        if uri_list[1] not in self._access_check or \
+                (uri_list[1] == 'project' and uri_len == 2):
+            self.current_user = current_user
+            return
+        # project and folder and task, requested task by id
+        elif uri_list[1] == 'task' and uri_len == 5:
+            # user_id, project_pub_id, folder_pub_id, task_pub_id
+            args = (user_id, uri_list[2], uri_list[3], uri_list[4])
+            query = SelectQueries.project_folder_task_access
+        # project and folder, requested list of tasks by folder
+        elif uri_list[1] == 'task' and uri_len == 4:
+            # user_id, project_pub_id, folder_pub_id
+            args = (user_id, uri_list[2], uri_list[3])
+            query = SelectQueries.project_folder_access
+        # project, requested project details or list of tasks/folders
+        elif uri_list[1] in self._access_check and uri_len == 3:
+            # user_id, project_pub_id
+            args = (user_id, uri_list[2])
+            query = SelectQueries.project_access
+
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(query, args)
+                _res = await cur.fetchall()
+                desc = [item.name for item in cur.description]
+        if not _res:
+            raise tornado.web.HTTPError(404)
+
+        # Add project_id, folder_id, task_id, role to current_user
+        # folder_id and task_id are optional, depends what users accesses
+        current_user.update(dict(zip(desc, _res[0])))
+        # Read-only restriction
+        if self.request.method != 'GET' and current_user['role'] == 0:
+            raise tornado.web.HTTPError(405)
         self.current_user = current_user

@@ -17,6 +17,8 @@ FROM
 WHERE
     t.token_select = %s and t.token_renew = %s
 """
+    # Check access to the project
+    # If the project doesn't exists return nothing
     project_access = """
 SELECT
     projects.project_id, pu.role
@@ -27,9 +29,11 @@ FROM
 WHERE 
     pu.user_id = %s and projects.project_pub_id = %s
 """
+    # If folder doesn't exists or user doesn't have access to it
+    # return nothing
     project_folder_access = """
 SELECT
-    projects.project_id, pu.role
+    projects.project_id, folders.folder_id, pu.role
 FROM
     tasker.projects_users pu
     INNER JOIN
@@ -42,9 +46,11 @@ WHERE
     and projects.project_pub_id = %s
     and folders.folder_pub_id = %s
 """
+    # If task doesn't exists or user doesn't have access to it
+    # return nothing
     project_folder_task_access = """
 SELECT
-    projects.project_id, pu.role
+    projects.project_id, folders.folder_id, tasks.task_id, pu.role
 FROM
     tasker.projects_users pu
     INNER JOIN
