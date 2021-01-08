@@ -4,6 +4,7 @@ import tornado.web
 
 from .base import ApiHandler
 from ...sql.create import CreateSequenceQueries
+from ...sql.delete import DeleteQueries
 from ...sql.insert import InsertQueries
 from ...sql.select import SelectQueries
 
@@ -72,3 +73,11 @@ class ApiProjectIdHandler(ApiHandler):
         if not _res:
             raise tornado.web.HTTPError(404)
         self.write(dict(zip(desc, _res[0])))
+
+    async def delete(self, project_pub_id):
+        """ Delete a project by id """
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    DeleteQueries.project, (self.current_user['project_id'],)
+                )
