@@ -6,7 +6,7 @@ import nacl.utils
 import tornado.web
 
 from .conf import DEBUG, TOKEN_EXPIRES_TIME, WORKERS, DB_SETTINGS
-from .handlers.api.tokens import GetTokensHandler, RenewTokensHandler
+from .handlers.api.tokens import ApiTokensNewHandler, ApiTokensRenewHandler
 from .handlers.api.projects import ApiProjectHandler, ApiProjectAllHandler
 from .handlers.api.folders import ApiFolderProjectHandler
 from .handlers.api.tasks import ApiTaskFolderHandler, ApiTaskProjectHandler, \
@@ -22,8 +22,8 @@ class ServerApp(tornado.web.Application):
         self.pool_executor = ThreadPoolExecutor(max_workers=WORKERS)
 
         handlers = [
-            (r'/api/tokens/get', GetTokensHandler),
-            (r'/api/tokens/renew', RenewTokensHandler),
+            (r'/api/tokens/new', ApiTokensNewHandler),
+            (r'/api/tokens/renew', ApiTokensRenewHandler),
 
             (r'/api/project', ApiProjectAllHandler),
             (r'/api/project/([0-9]*/?)', ApiProjectHandler),

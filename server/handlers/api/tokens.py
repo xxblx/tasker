@@ -56,7 +56,7 @@ class BaseTokensHandler(BaseApiHandler):
         return tokens
 
 
-class GetTokensHandler(BaseTokensHandler):
+class ApiTokensNewHandler(BaseTokensHandler):
     async def post(self):
         try:
             username = self.get_argument('username')
@@ -72,7 +72,7 @@ class GetTokensHandler(BaseTokensHandler):
         self.write(tokens)
 
 
-class RenewTokensHandler(BaseTokensHandler):
+class ApiTokensRenewHandler(BaseTokensHandler):
     async def post(self):
         try:
             token_select = self.get_argument('token_select')

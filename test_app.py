@@ -18,7 +18,7 @@ async def get_tokens(http_client, base_url, password=None):
     if password is not None:
         data['password'] = password
     return await http_client.fetch(
-        urljoin(base_url, '/api/tokens/get'),
+        urljoin(base_url, '/api/tokens/new'),
         method='POST',
         body=urlencode(data),
         raise_error=False
@@ -36,7 +36,7 @@ def app():
 async def test_api_tokens_get(http_client, base_url):
     # Valid username and password
     r = await http_client.fetch(
-        urljoin(base_url, '/api/tokens/get'),
+        urljoin(base_url, '/api/tokens/new'),
         method='POST',
         body=urlencode({'username': USERNAME, 'password': PASSWORD})
     )
@@ -44,7 +44,7 @@ async def test_api_tokens_get(http_client, base_url):
 
     # Invalid password
     r = await http_client.fetch(
-        urljoin(base_url, '/api/tokens/get'),
+        urljoin(base_url, '/api/tokens/new'),
         method='POST',
         body=urlencode({'username': USERNAME, 'password': 'PASSWORD'}),
         raise_error=False
@@ -55,7 +55,7 @@ async def test_api_tokens_get(http_client, base_url):
 @pytest.mark.gen_test
 async def test_api_tokens_renew(http_client, base_url):
     r = await http_client.fetch(
-        urljoin(base_url, '/api/tokens/get'),
+        urljoin(base_url, '/api/tokens/new'),
         method='POST',
         body=urlencode({'username': USERNAME, 'password': PASSWORD})
     )
