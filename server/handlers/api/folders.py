@@ -2,8 +2,10 @@
 from psycopg2.sql import SQL, Identifier
 
 from .base import ApiHandler
+from ...sql.delete import DeleteQueries
 from ...sql.insert import InsertQueries
 from ...sql.select import SelectQueries
+from ...sql.update import UpdateQueries
 
 
 class ApiFolderProjectHandler(ApiHandler):
@@ -28,4 +30,19 @@ class ApiFolderProjectHandler(ApiHandler):
                 await cur.execute(
                     SQL(InsertQueries.add_folder).format(seq=seq_pf),
                     (title, project_id)
+                )
+
+
+class ApiFolderHandler(ApiHandler):
+    async def put(self, project_pub_id, folder_pub_id):
+        args = (self.get_argument('title'), self.current_user['folder_id'])
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(UpdateQueries.folder, args)
+
+    async def delete(self, project_pub_id, folder_pub_id):
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    DeleteQueries.folder, (self.current_user['folder_id'],)
                 )
