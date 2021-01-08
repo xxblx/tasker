@@ -21,18 +21,18 @@ class CreateSchemaQueries(CreateQueries):
 
 class CreateFunctionQueries(CreateQueries):
     gen_project_id = """
-CREATE OR REPLACE FUNCTION tasker.gen_project_id() returns BIGINT AS $$
+CREATE OR REPLACE FUNCTION tasker.gen_project_id() RETURNS BIGINT AS $$
 DECLARE
     start_epoch BIGINT := 1607731200000;
     cur_time BIGINT;
     seq_id INT;
     result BIGINT;
 BEGIN
-    SELECT FLOOR(EXTRACT(EPOCH FROM clock_timestamp()) * 1000) INTO cur_time;
+    SELECT FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000) INTO cur_time;
     SELECT nextval('tasker.project_id_seq') % 1024 INTO seq_id;
     result := (cur_time - start_epoch) << 10;
     result := result | (seq_id);
-    return result;
+    RETURN result;
 END;
     $$ LANGUAGE plpgsql strict immutable;
 """
