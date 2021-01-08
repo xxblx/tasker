@@ -9,7 +9,7 @@ from ...sql.insert import InsertQueries
 from ...sql.select import SelectQueries
 
 
-class ApiProjectHandler(ApiHandler):
+class ApiProjectAllHandler(ApiHandler):
     async def get(self):
         """ Return all projects available for a user"""
         async with self.db_pool.acquire() as conn:
@@ -59,7 +59,7 @@ class ApiProjectHandler(ApiHandler):
                 )
 
 
-class ApiProjectIdHandler(ApiHandler):
+class ApiProjectHandler(ApiHandler):
     async def get(self, project_pub_id):
         """ Return detailed info about a project """
         async with self.db_pool.acquire() as conn:

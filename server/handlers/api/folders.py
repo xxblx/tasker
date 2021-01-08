@@ -6,7 +6,7 @@ from ...sql.insert import InsertQueries
 from ...sql.select import SelectQueries
 
 
-class ApiFolderHandler(ApiHandler):
+class ApiFolderProjectHandler(ApiHandler):
     async def get(self, project_pub_id):
         """ Return all folders in a project """
         async with self.db_pool.acquire() as conn:
