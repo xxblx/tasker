@@ -26,10 +26,8 @@ INSERT INTO tasker.projects_users(project_id, user_id, role) VALUES(%s, %s, %s)
     tokens = """
 INSERT INTO 
     tasker.tokens(token_select, token_verify, token_renew, expires_in, user_id)
-SELECT
-    %s, %s, %s, %s, user_id
-FROM
-    tasker.users
-WHERE
-    username = %s
+SELECT %s, %s, %s, CURRENT_TIMESTAMP + '{}'::INTERVAL, user_id
+FROM tasker.users
+WHERE username = %s
+RETURNING CAST(FLOOR(EXTRACT(EPOCH FROM expires_in)) as INT)
 """

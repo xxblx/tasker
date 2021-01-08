@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from time import mktime
 from uuid import uuid4
 
+from psycopg2.sql import SQL, Identifier
 import tornado.web
 
 from .base import BaseApiHandler
@@ -33,27 +34,24 @@ class BaseTokensHandler(BaseApiHandler):
         token_select = uuid4().hex
         token_verify = uuid4().hex
         token_renew = uuid4().hex
-        expires_in = datetime.now() + timedelta(seconds=self.token_expires_time)
-        expires_in = mktime(expires_in.utctimetuple())
-
         # verify_token stored as a hash instead of plain-text
         token_verify_hash = await self.hash_token(token_verify, self.mac_key)
+        # Formatted query has expression like
+        # `CURRENT_TIMESTAMP + '7200s'::INTERVAL`
+        # where 7200 is `TOKEN_EXPIRES_TIME` defined in `conf.py`
+        query = SQL(InsertQueries.tokens).format(
+            Identifier('{}s'.format(self.token_expires_time))
+        )
+        args = (token_select, token_verify_hash, token_renew, username)
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
-                await cur.execute(
-                    InsertQueries.tokens, (
-                        token_select,
-                        token_verify_hash,
-                        token_renew,
-                        expires_in,
-                        username
-                ))
-
+                await cur.execute(query, args)
+                _res = await cur.fetchall()
         tokens = {
             'token_select': token_select,
             'token_verify': token_verify,
             'token_renew': token_renew,
-            'expires_in': expires_in
+            'expires_in': _res[0][0]
         }
         return tokens
 

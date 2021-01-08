@@ -7,7 +7,7 @@ SELECT
 FROM
     tasker.tokens t INNER JOIN tasker.users u on t.user_id = u.user_id
 WHERE
-    t.token_select = %s and t.expires_in >= extract(epoch from now())
+    t.token_select = %s and t.expires_in >= now()
 """
     token_renew = """
 SELECT
@@ -93,9 +93,9 @@ SELECT
     p.project_pub_id project_id,
     f.folder_pub_id folder_id,
     t.title,
-    t.datetime_from,
-    t.datetime_due,
-    t.edited
+    CAST(FLOOR(EXTRACT(EPOCH FROM t.datetime_from)) as INT) datetime_from,
+    CAST(FLOOR(EXTRACT(EPOCH FROM t.datetime_due)) as INT) datetime_due,
+    CAST(FLOOR(EXTRACT(EPOCH FROM t.edited)) as INT) edited
 FROM
     tasker.tasks t 
     INNER JOIN tasker.folders f on t.folder_id = f.folder_id
@@ -110,9 +110,9 @@ SELECT
     f.folder_pub_id folder_id,
     t.task_pub_id id,
     t.title,
-    t.datetime_from,
-    t.datetime_due,
-    t.edited
+    CAST(FLOOR(EXTRACT(EPOCH FROM t.datetime_from)) as INT) datetime_from,
+    CAST(FLOOR(EXTRACT(EPOCH FROM t.datetime_due)) as INT) datetime_due,
+    CAST(FLOOR(EXTRACT(EPOCH FROM t.edited)) as INT) edited
 FROM
     tasker.tasks t 
     INNER JOIN tasker.folders f on t.folder_id = f.folder_id
@@ -127,10 +127,10 @@ SELECT
     f.folder_pub_id folder_id,
     t.title,
     t.description,
-    t.datetime_from,
-    t.datetime_due,
-    t.created,
-    t.edited,
+    CAST(FLOOR(EXTRACT(EPOCH FROM t.datetime_from)) as INT) datetime_from,
+    CAST(FLOOR(EXTRACT(EPOCH FROM t.datetime_due)) as INT) datetime_due,
+    CAST(FLOOR(EXTRACT(EPOCH FROM t.created)) as INT) created,
+    CAST(FLOOR(EXTRACT(EPOCH FROM t.edited)) as INT) edited,
     u.username
 FROM
     tasker.tasks t

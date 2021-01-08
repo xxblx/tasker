@@ -39,8 +39,8 @@ END;
     task_update_edited = """
 CREATE OR REPLACE FUNCTION tasker.task_update_edited() RETURNS TRIGGER AS $$
 BEGIN
-    NEW.edited = EXTRACT(EPOCH FROM CURRENT_TIMESTAMP);
-    RETURN NEW;   
+    NEW.edited = CURRENT_TIMESTAMP;
+    RETURN NEW;
 END;
     $$ language plpgsql strict;
 """
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS tasker.tokens(
     token_select TEXT,
     token_verify BYTEA,
     token_renew TEXT,
-    expires_in INT,
+    expires_in TIMESTAMP,
     user_id INT,
     UNIQUE(token_id, token_select),
     PRIMARY KEY(token_id),
@@ -147,13 +147,13 @@ CREATE TABLE IF NOT EXISTS tasker.tasks(
     task_pub_id INT,
     title TEXT,
     description TEXT DEFAULT NULL,
-    datetime_from INT DEFAULT NULL,
-    datetime_due INT DEFAULT NULL,
+    datetime_from TIMESTAMP DEFAULT NULL,
+    datetime_due TIMESTAMP DEFAULT NULL,
     user_id INT,
     project_id INT,
     folder_id INT,
-    created INT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP),
-    edited INT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP),
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    edited TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(task_id),
     CONSTRAINT fk_task_user
         FOREIGN KEY(user_id)

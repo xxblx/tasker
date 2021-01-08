@@ -8,7 +8,8 @@ import psycopg2
 from psycopg2.sql import SQL, Identifier
 
 from server.sql.create import (CreateSchemaQueries, CreateFunctionQueries,
-                               CreateSequenceQueries, CreateTableQueries)
+                               CreateSequenceQueries, CreateTableQueries,
+                               CreateTriggerQueries)
 from server.sql.delete import DeleteQueries
 from server.sql.insert import InsertQueries
 from server.sql.update import UpdateQueries
@@ -24,6 +25,8 @@ def run_create_queries():
             for query in CreateSequenceQueries.get_create_queries():
                 cur.execute(query)
             for query in CreateTableQueries.get_create_queries():
+                cur.execute(query)
+            for query in CreateTriggerQueries.get_create_queries():
                 cur.execute(query)
 
 

@@ -90,8 +90,7 @@ class ApiTaskHandler(ApiHandler):
             # Timestamp validity check
             elif arg in ('datetime_from', 'datetime_due'):
                 try:
-                    datetime.utcfromtimestamp(int(val))
-                    args[arg] = val
+                    args[arg] = datetime.utcfromtimestamp(int(val))
                 # ValueError if value cannot be converted to int
                 # OSError if value is too big for being timestamp
                 except (ValueError, OSError):
