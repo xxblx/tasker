@@ -1,6 +1,4 @@
 
-from datetime import datetime, timedelta
-from time import mktime
 from uuid import uuid4
 
 from psycopg2.sql import SQL, Identifier
