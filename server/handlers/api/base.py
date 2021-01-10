@@ -89,26 +89,26 @@ class ApiHandler(BaseApiHandler):
         }
 
         # Check access to project and verify project, folder and task ids
-        uri_list = self.request.uri.strip('/').split('/')
-        uri_len = len(uri_list)
-        if uri_list[1] not in self._access_check or \
-                (uri_list[1] == 'project' and uri_len == 2):
+        path_list = self.request.path.strip('/').split('/')
+        path_len = len(path_list)
+        if path_list[1] not in self._access_check or \
+                (path_list[1] == 'project' and path_len == 2):
             self.current_user = current_user
             return
         # project and folder and task, requested task by id
-        elif uri_list[1] == 'task' and uri_len == 5:
+        elif path_list[1] == 'task' and path_len == 5:
             # user_id, project_pub_id, folder_pub_id, task_pub_id
-            args = (user_id, uri_list[2], uri_list[3], uri_list[4])
+            args = (user_id, path_list[2], path_list[3], path_list[4])
             query = SelectQueries.project_folder_task_access
         # project and folder, requested list of tasks by folder
-        elif uri_list[1] == 'task' and uri_len == 4:
+        elif path_list[1] == 'task' and path_len == 4:
             # user_id, project_pub_id, folder_pub_id
-            args = (user_id, uri_list[2], uri_list[3])
+            args = (user_id, path_list[2], path_list[3])
             query = SelectQueries.project_folder_access
         # project, requested project details or list of tasks/folders
-        elif uri_list[1] in self._access_check and uri_len == 3:
+        elif path_list[1] in self._access_check and path_len == 3:
             # user_id, project_pub_id
-            args = (user_id, uri_list[2])
+            args = (user_id, path_list[2])
             query = SelectQueries.project_access
 
         async with self.db_pool.acquire() as conn:
