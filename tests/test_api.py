@@ -1,4 +1,5 @@
 
+import sys
 import json
 from urllib.parse import urljoin, urlencode
 from uuid import uuid4
@@ -6,6 +7,7 @@ from uuid import uuid4
 import tornado.ioloop
 import pytest
 
+sys.path.append('..')
 from db_manage import create_user, delete_user
 from server.app import ServerApp, get_db_pool
 
