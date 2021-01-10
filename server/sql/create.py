@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS tasker.users(
     password BYTEA,
     role_global SMALLINT default 1,
     display_name TEXT DEFAULT NULL,
-    UNIQUE(user_id, username),
+    UNIQUE(username),
     PRIMARY KEY(user_id)
 )
 """
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS tasker.tokens(
     token_renew TEXT,
     expires_in TIMESTAMP,
     user_id INT,
-    UNIQUE(token_id, token_select),
+    UNIQUE(token_select),
     PRIMARY KEY(token_id),
     CONSTRAINT fk_token_user
         FOREIGN KEY(user_id)
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS tasker.projects(
     project_pub_id BIGINT NOT NULL DEFAULT tasker.gen_project_id(),
     title TEXT,
     description TEXT DEFAULT NULL,
-    UNIQUE(project_id, project_pub_id),
+    UNIQUE(project_pub_id),
     PRIMARY KEY(project_id)
 )
 """
