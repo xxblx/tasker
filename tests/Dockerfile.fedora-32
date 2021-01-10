@@ -1,0 +1,20 @@
+# Clone from the Fedora 32 image
+FROM registry.fedoraproject.org/fedora:32
+
+RUN useradd -s /sbin/nologin -m taskeruser
+RUN dnf upgrade -y
+RUN dnf install -y postgresql \
+    postgresql-server \
+    postgresql-contrib \
+    python3-tornado \
+    python3-psycopg2 \
+    python3-aiopg \
+    python3-pytest \
+    python3-pytest-tornado \
+    python3-pynacl
+RUN mkdir -p /home/taskeruser/tasker/server
+RUN mkdir -p /home/taskeruser/tasker/tests
+RUN ln -s /home/taskeruser/tasker /tasker
+
+CMD [ "/sbin/init" ]
+

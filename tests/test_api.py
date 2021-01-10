@@ -1,13 +1,14 @@
 
 import sys
 import json
+import os.path
 from urllib.parse import urljoin, urlencode
 from uuid import uuid4
 
 import tornado.ioloop
 import pytest
 
-sys.path.append('..')
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from db_manage import create_user, delete_user
 from server.app import ServerApp, get_db_pool
 
