@@ -101,7 +101,7 @@ class ApiHandler(BaseApiHandler):
             args = (user_id, path_list[2], path_list[3], path_list[4])
             query = SelectQueries.project_folder_task_access
         # project and folder, requested list of tasks by folder
-        elif path_list[1] == 'task' and path_len == 4:
+        elif path_list[1] in ('task', 'folder') and path_len == 4:
             # user_id, project_pub_id, folder_pub_id
             args = (user_id, path_list[2], path_list[3])
             query = SelectQueries.project_folder_access
