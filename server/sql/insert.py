@@ -5,12 +5,12 @@ INSERT INTO tasker.users(username, password) VALUES(%s, %s) RETURNING user_id
 """
     add_project = """
 INSERT INTO tasker.projects(title, description) VALUES(%s, %s) 
-RETURNING project_id
+RETURNING project_id, project_pub_id
 """
     add_folder = """
 INSERT INTO tasker.folders(folder_pub_id, title, project_id)
 VALUES(nextval('tasker.{seq}'), %s, %s)
-RETURNING folder_id
+RETURNING folder_id, folder_pub_id
 """
     add_task = """
 INSERT INTO tasker.tasks(
@@ -18,7 +18,7 @@ INSERT INTO tasker.tasks(
     user_id, project_id, folder_id
 )
 VALUES(nextval('tasker.{seq}'), %s, %s, %s, %s, %s, %s, %s)
-RETURNING task_pub_id
+RETURNING task_id, task_pub_id
 """
     add_user_project = """
 INSERT INTO tasker.projects_users(project_id, user_id, role) VALUES(%s, %s, %s)

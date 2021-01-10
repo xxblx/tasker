@@ -31,6 +31,8 @@ class ApiFolderProjectHandler(ApiHandler):
                     SQL(InsertQueries.add_folder).format(seq=seq_pf),
                     (title, project_id)
                 )
+                folder_pub_id = (await cur.fetchall())[0][1]
+        self.write({'id': folder_pub_id})
 
 
 class ApiFolderHandler(ApiHandler):

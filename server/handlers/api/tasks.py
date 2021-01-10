@@ -40,8 +40,8 @@ class ApiTaskFolderHandler(ApiHandler):
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(query, args)
-                _res = await cur.fetchall()
-        self.write({'id': _res[0][0]})
+                task_pub_id = (await cur.fetchall())[0][1]
+        self.write({'id': task_pub_id})
 
 
 class ApiTaskProjectHandler(ApiHandler):

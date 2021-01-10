@@ -35,7 +35,7 @@ class ApiProjectAllHandler(ApiHandler):
                 await cur.execute(
                     InsertQueries.add_project, (title, description)
                 )
-                project_id = (await cur.fetchall())[0][0]
+                project_id, project_pub_id = (await cur.fetchall())[0]
 
                 # Set owner
                 await cur.execute(
@@ -57,6 +57,7 @@ class ApiProjectAllHandler(ApiHandler):
                     SQL(InsertQueries.add_folder).format(seq=seq_pf),
                     ('My Tasks', project_id)
                 )
+        self.write({'id': project_pub_id})
 
 
 class ApiProjectHandler(ApiHandler):
