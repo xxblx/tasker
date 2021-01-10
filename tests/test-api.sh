@@ -25,8 +25,9 @@ podman cp conf.pytest-container.py $CONTAINER:/tasker/server/conf.py
 podman exec $CONTAINER find /tasker/server -name '__pycache__' -type d -exec rm -r {} +
 
 podman exec -u taskeruser $CONTAINER /tasker/db_manage.py init-db
-podman exec -u taskeruser $CONTAINER pytest /tasker/tests/test_api.py -W ignore::DeprecationWarning -p no:cacheprovider
+# `cmd || true` masks non-zero exit code of cmd
+# it is needed for future stop and rm commands
+podman exec -u taskeruser $CONTAINER pytest /tasker/tests/test_api.py -W ignore::DeprecationWarning -p no:cacheprovider || true
 
 podman container stop $CONTAINER
 podman container rm $CONTAINER
-
