@@ -36,6 +36,16 @@ class ApiFolderProjectHandler(ApiHandler):
 
 
 class ApiFolderHandler(ApiHandler):
+    async def get(self, project_pub_id, folder_pub_id):
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    SelectQueries.folder, (self.current_user['folder_id'],)
+                )
+                _res = await cur.fetchall()
+                desc = [item.name for item in cur.description]
+        self.write(dict(zip(desc, _res[0])))
+
     async def put(self, project_pub_id, folder_pub_id):
         args = (self.get_argument('title'), self.current_user['folder_id'])
         async with self.db_pool.acquire() as conn:

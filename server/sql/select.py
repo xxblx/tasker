@@ -86,6 +86,14 @@ FROM
 WHERE 
     p.project_id = %s
 """
+    folder = """
+SELECT
+    f.folder_pub_id id, f.title
+FROM
+    tasker.folders f
+WHERE
+    f.folder_id = %s
+"""
     # List tasks in a folder
     tasks_by_folder = """
 SELECT
