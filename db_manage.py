@@ -2,6 +2,7 @@
 
 import argparse
 import getpass
+from uuid import uuid4
 
 import nacl.pwhash
 import psycopg2
@@ -30,8 +31,12 @@ def run_create_queries():
                 cur.execute(query)
 
 
-def create_user(username, password=None):
-    if password is None:
+def create_user(username, password=None, generate_password=None):
+    _result = None
+    if password is None and generate_password is not None:
+        password = uuid4().hex
+        _result = password
+    elif password is None and generate_password is None:
         password = getpass.getpass()
     hashed = nacl.pwhash.str(password.encode())
     with psycopg2.connect(**DB_SETTINGS) as conn:
@@ -75,6 +80,7 @@ def create_user(username, password=None):
                     SQL(InsertQueries.add_task).format(seq=seq_pt),
                     args
                 )
+    return _result
 
 
 def delete_user(username):
@@ -115,7 +121,7 @@ def main():
         },
         'user-add': {
             'func': create_user,
-            'kw': ['username', 'password']
+            'kw': ['username', 'password', 'generate_password']
         },
         'user-del': {
             'func': delete_user,
@@ -141,6 +147,8 @@ def main():
     user_add.set_defaults(used='user-add')
     user_add.add_argument('-u', '--username', type=str, required=True)
     user_add.add_argument('-p', '--password', type=str, default=None)
+    user_add.add_argument('--generate-password', dest='generate_password',
+                          action='store_true', default=None)
 
     user_del = subparsers.add_parser('user-del')
     user_del.set_defaults(used='user-del')
@@ -163,7 +171,9 @@ def main():
         _args = vars(args)
         func = commands[args.used]['func']
         kw = {k: _args[k] for k in commands[args.used]['kw']}
-        func(**kw)
+        result = func(**kw)
+        if result is not None:
+            print(result)
 
 
 if __name__ == '__main__':
