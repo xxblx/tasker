@@ -11,7 +11,8 @@ RUN dnf install -y postgresql \
     python3-aiopg \
     python3-pytest \
     python3-pytest-tornado \
-    python3-pynacl
+    python3-pynacl \
+    findutils
 RUN mkdir -p /home/taskeruser/tasker/server
 RUN mkdir -p /home/taskeruser/tasker/tests
 RUN ln -s /home/taskeruser/tasker /tasker

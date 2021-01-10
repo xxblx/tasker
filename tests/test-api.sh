@@ -22,6 +22,7 @@ podman cp ../db_manage.py $CONTAINER:/tasker/db_manage.py
 podman cp ../run_server.py $CONTAINER:/tasker/run_server.py
 podman cp test_api.py $CONTAINER:/tasker/tests/test_api.py
 podman cp conf.pytest-container.py $CONTAINER:/tasker/server/conf.py
+podman exec $CONTAINER find /tasker/server -name '__pycache__' -type d -exec rm -r {} +
 
 podman exec -u taskeruser $CONTAINER /tasker/db_manage.py init-db
 podman exec -u taskeruser $CONTAINER pytest /tasker/tests/test_api.py -W ignore::DeprecationWarning -p no:cacheprovider
