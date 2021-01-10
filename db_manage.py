@@ -30,8 +30,9 @@ def run_create_queries():
                 cur.execute(query)
 
 
-def create_user(username):
-    password = getpass.getpass()
+def create_user(username, password=None):
+    if password is None:
+        password = getpass.getpass()
     hashed = nacl.pwhash.str(password.encode())
     with psycopg2.connect(**DB_SETTINGS) as conn:
         with conn.cursor() as cur:
@@ -114,7 +115,7 @@ def main():
         },
         'user-add': {
             'func': create_user,
-            'kw': ['username']
+            'kw': ['username', 'password']
         },
         'user-del': {
             'func': delete_user,
@@ -139,6 +140,7 @@ def main():
     user_add = subparsers.add_parser('user-add')
     user_add.set_defaults(used='user-add')
     user_add.add_argument('-u', '--username', type=str, required=True)
+    user_add.add_argument('-p', '--password', type=str, default=None)
 
     user_del = subparsers.add_parser('user-del')
     user_del.set_defaults(used='user-del')
