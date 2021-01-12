@@ -47,10 +47,7 @@ async def get_new_tokens(http_client, base_url, user):
 @pytest.fixture
 def user():
     username = 'user_{}'.format(int(mktime(datetime.utcnow().timetuple())))
-    user_dict = {
-        'username': username,
-        'password': create_user(username, generate_password=True)
-    }
+    user_dict = create_user(username, generate_password=True)
     yield user_dict
     delete_user(username)
 

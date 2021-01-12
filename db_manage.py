@@ -32,10 +32,10 @@ def run_create_queries():
 
 
 def create_user(username, password=None, generate_password=None):
-    _result = None
+    results = {'username': username}
     if password is None and generate_password is not None:
         password = uuid4().hex
-        _result = password
+        results['password'] = password
     elif password is None and generate_password is None:
         password = getpass.getpass()
     hashed = nacl.pwhash.str(password.encode())
@@ -43,17 +43,23 @@ def create_user(username, password=None, generate_password=None):
         with conn.cursor() as cur:
             # Create a user
             cur.execute(InsertQueries.add_user, (username, hashed))
-            user_id = cur.fetchall()[0][0]
+            results['user_id'] = cur.fetchall()[0][0]
             # Create home project for the user
             cur.execute(InsertQueries.add_project, ('My Project', None))
-            project_id = cur.fetchall()[0][0]
+            project_id, project_pub_id = cur.fetchall()[0]
+            results['project_id'] = project_pub_id
             # Make the user an admin of the project
             cur.execute(
-                InsertQueries.add_user_project, (project_id, user_id, 2)
+                InsertQueries.add_user_project,
+                (project_id, results['user_id'], 2)
             )
             # Create sequences for the project: folders, tasks
-            seq_pf = Identifier('project_folder_{}_seq'.format(project_id))
-            seq_pt = Identifier('project_task_{}_seq'.format(project_id))
+            seq_pf = Identifier(
+                'project_folder_{}_seq'.format(project_id)
+            )
+            seq_pt = Identifier(
+                'project_task_{}_seq'.format(project_id)
+            )
             cur.execute(
                 SQL(CreateSequenceQueries._new_sequence).format(seq=seq_pf)
             )
@@ -65,14 +71,16 @@ def create_user(username, password=None, generate_password=None):
                 SQL(InsertQueries.add_folder).format(seq=seq_pf),
                 ('My Tasks', project_id)
             )
-            folder_id = cur.fetchall()[0][0]
+            folder_id, folder_pub_id = cur.fetchall()[0]
+            results['folder_id'] = folder_pub_id
+            results['tasks'] = []
             # Create a few demo tasks
             for i in range(3):
                 args = (
                     'Demo task {}'.format(i+1),  # title
                     'This is a description of Task #{}'.format(i+1),
                     None, None,  # datetime_from, datetime_due
-                    user_id,
+                    results['user_id'],
                     project_id,
                     folder_id
                 )
@@ -80,7 +88,9 @@ def create_user(username, password=None, generate_password=None):
                     SQL(InsertQueries.add_task).format(seq=seq_pt),
                     args
                 )
-    return _result
+                task_id, task_pub_id = cur.fetchall()[0]
+                results['tasks'].append(task_pub_id)
+    return results
 
 
 def delete_user(username):
