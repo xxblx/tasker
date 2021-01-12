@@ -18,7 +18,7 @@ PATH = {
     'project': '/api/project/{}',
     'folder_project': '/api/folder/{}',
     'folder': '/api/folder/{}/{}',
-    'task_project': '/api/project/{}',
+    'task_project': '/api/task/{}',
     'task_folder': '/api/task/{}/{}',
     'task': '/api/task/{}/{}/{}'
 }
