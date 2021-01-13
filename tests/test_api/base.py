@@ -48,6 +48,8 @@ async def get_new_tokens(http_client, base_url, user):
 def user():
     username = 'user_{}'.format(int(mktime(datetime.utcnow().timetuple())))
     user_dict = create_user(username, generate_password=True)
+    user_dict['password_auth'] = \
+        {k: user_dict[k] for k in ('username', 'password')}
     yield user_dict
     delete_user(username)
 
