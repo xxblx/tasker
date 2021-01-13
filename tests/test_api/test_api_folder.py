@@ -7,9 +7,8 @@ from .base import PATH, app, user, fetch, get_new_tokens
 
 @pytest.mark.gen_test
 async def test_folder_get(http_client, base_url, user):
-    params = await get_new_tokens(http_client, base_url, user)
-    r = await fetch(http_client, base_url, PATH['project_base'], 'GET', params)
-    project_id = json.loads(r.body)['projects'][0]['id']
+    params = await get_new_tokens(http_client, base_url, user['password_auth'])
+    project_id = user['project_id']
     # List folders in project
     r = await fetch(http_client, base_url,
                     PATH['folder_project'].format(project_id), 'GET', params)
@@ -41,10 +40,9 @@ async def test_folder_get(http_client, base_url, user):
 
 @pytest.mark.gen_test
 async def test_folder_add(http_client, base_url, user):
-    params = await get_new_tokens(http_client, base_url, user)
-    r = await fetch(http_client, base_url, PATH['project_base'], 'GET', params)
+    params = await get_new_tokens(http_client, base_url, user['password_auth'])
     # Add folder
-    project_id = json.loads(r.body)['projects'][0]['id']
+    project_id = user['project_id']
     params['title'] = 'New folder'
     r = await fetch(http_client, base_url,
                     PATH['folder_project'].format(project_id), 'POST', params)
@@ -59,9 +57,8 @@ async def test_folder_add(http_client, base_url, user):
 
 @pytest.mark.gen_test
 async def test_folder_delete(http_client, base_url, user):
-    params = await get_new_tokens(http_client, base_url, user)
-    r = await fetch(http_client, base_url, PATH['project_base'], 'GET', params)
-    project_id = json.loads(r.body)['projects'][0]['id']
+    params = await get_new_tokens(http_client, base_url, user['password_auth'])
+    project_id = user['project_id']
     params['title'] = 'New folder'
     r = await fetch(http_client, base_url,
                     PATH['folder_project'].format(project_id), 'POST', params)
@@ -84,9 +81,8 @@ async def test_folder_delete(http_client, base_url, user):
 
 @pytest.mark.gen_test
 async def test_folder_update(http_client, base_url, user):
-    params = await get_new_tokens(http_client, base_url, user)
-    r = await fetch(http_client, base_url, PATH['project_base'], 'GET', params)
-    project_id = json.loads(r.body)['projects'][0]['id']
+    params = await get_new_tokens(http_client, base_url, user['password_auth'])
+    project_id = user['project_id']
     params['title'] = 'New folder'
     r = await fetch(http_client, base_url,
                     PATH['folder_project'].format(project_id), 'POST', params)

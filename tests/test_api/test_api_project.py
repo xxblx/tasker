@@ -8,7 +8,7 @@ from .base import PATH, app, user, fetch, get_new_tokens
 
 @pytest.mark.gen_test
 async def test_project_get(http_client, base_url, user):
-    params = await get_new_tokens(http_client, base_url, user)
+    params = await get_new_tokens(http_client, base_url, user['password_auth'])
 
     # List available projects
     r = await fetch(http_client, base_url, PATH['project_base'], 'GET', params)
@@ -39,7 +39,7 @@ async def test_project_get(http_client, base_url, user):
 
 @pytest.mark.gen_test
 async def test_project_add(http_client, base_url, user):
-    params = await get_new_tokens(http_client, base_url, user)
+    params = await get_new_tokens(http_client, base_url, user['password_auth'])
     # Try to add a project without necessary parameters
     r = await fetch(http_client, base_url, PATH['project_base'], 'POST', params)
     assert r.code == 400
@@ -65,7 +65,7 @@ async def test_project_add(http_client, base_url, user):
 
 @pytest.mark.gen_test
 async def test_project_delete(http_client, base_url, user):
-    params = await get_new_tokens(http_client, base_url, user)
+    params = await get_new_tokens(http_client, base_url, user['password_auth'])
     params_add = params.copy()
     params_add.update({'title': 'project'})
     r = await fetch(http_client, base_url, PATH['project_base'], 'POST',

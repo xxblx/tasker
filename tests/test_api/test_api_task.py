@@ -23,7 +23,7 @@ def check_task_dict(task):
 
 @pytest.mark.gen_test
 async def test_task_get(http_client, base_url, user):
-    params = await get_new_tokens(http_client, base_url, user)
+    params = await get_new_tokens(http_client, base_url, user['password_auth'])
     r = await fetch(http_client, base_url, PATH['project_base'], 'GET', params)
     project_id = json.loads(r.body)['projects'][0]['id']
 
