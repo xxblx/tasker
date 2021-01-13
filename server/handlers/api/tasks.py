@@ -107,6 +107,8 @@ class ApiTaskHandler(ApiHandler):
                 args[arg] = _datetime_val
             else:
                 args[arg] = val
+        if not args:
+            raise tornado.web.HTTPError(400)
         query = SQL(UpdateQueries.task).format(SQL(', ').join(
             [SQL('{} = {}').format(Identifier(k), Placeholder(k)) for k in args]
         ))
