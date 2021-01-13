@@ -1,6 +1,7 @@
 
 from datetime import datetime
 
+import tornado.web
 from psycopg2.sql import SQL, Identifier, Placeholder
 
 from .base import ApiHandler
@@ -24,11 +25,22 @@ class ApiTaskFolderHandler(ApiHandler):
         self.write({'tasks': [dict(zip(desc, item)) for item in _res]})
 
     async def post(self, project_pub_id, folder_pub_id):
+        title = self.get_argument('title')
+        dates = []
+        for arg in ('datetime_from', 'datetime_due'):
+            val = self.get_argument(arg, None)
+            if val is None:
+                dates.append(val)
+                continue
+            # Timestamp validity check
+            _datetime_val = self.datetime_from_timestamp(val)
+            if _datetime_val is None:
+                raise tornado.web.HTTPError(400, 'invalid timestamp')
+            dates.append(_datetime_val)
         args = (
-            self.get_argument('title'),
+            title,
             self.get_argument('description', None),
-            self.get_argument('datetime_from', None),
-            self.get_argument('datetime_due', None),
+            *dates,
             self.current_user['user_id'],
             self.current_user['project_id'],
             self.current_user['folder_id']
@@ -89,12 +101,10 @@ class ApiTaskHandler(ApiHandler):
                 args[arg] = None
             # Timestamp validity check
             elif arg in ('datetime_from', 'datetime_due'):
-                try:
-                    args[arg] = datetime.utcfromtimestamp(int(val))
-                # ValueError if value cannot be converted to int
-                # OSError if value is too big for being timestamp
-                except (ValueError, OSError):
-                    pass
+                _datetime_val = self.datetime_from_timestamp(val)
+                if _datetime_val is None:
+                    raise tornado.web.HTTPError(400, 'invalid timestamp')
+                args[arg] = _datetime_val
             else:
                 args[arg] = val
         query = SQL(UpdateQueries.task).format(SQL(', ').join(

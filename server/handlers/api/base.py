@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import functools
 
 from nacl.bindings.utils import sodium_memcmp
@@ -59,6 +60,16 @@ class BaseApiHandler(BaseHandler):
 
 class ApiHandler(BaseApiHandler):
     _access_check = ('folder', 'task', 'project')
+
+    @staticmethod
+    def datetime_from_timestamp(val):
+        try:
+            res = datetime.utcfromtimestamp(int(val))
+        # ValueError if value cannot be converted to int
+        # OSError if value is too big for being timestamp
+        except (ValueError, OSError):
+            res = None
+        return res
 
     async def prepare(self):
         self.current_user = None
