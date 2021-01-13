@@ -9,27 +9,29 @@ from db_manage import delete_user
 
 @pytest.mark.gen_test
 async def test_tokens_new(http_client, base_url, user):
+    _user = user['password_auth']
     # Valid username and password
-    r = await fetch(http_client, base_url, PATH['new_tokens'], 'POST', user)
+    r = await fetch(http_client, base_url, PATH['new_tokens'], 'POST', _user)
     assert r.code == 200
 
     # Valid username and invalid password
-    password = user['password']
-    user['password'] = uuid4().hex
-    r = await fetch(http_client, base_url, PATH['new_tokens'], 'POST', user)
+    password = _user['password']
+    _user['password'] = uuid4().hex
+    r = await fetch(http_client, base_url, PATH['new_tokens'], 'POST', _user)
     assert r.code == 403
 
     # Delete user and try to get new tokens again
     # Invalid username and invalid password
-    user['password'] = password
-    delete_user(user['username'])
-    r = await fetch(http_client, base_url, PATH['new_tokens'], 'POST', user)
+    _user['password'] = password
+    delete_user(_user['username'])
+    r = await fetch(http_client, base_url, PATH['new_tokens'], 'POST', _user)
     assert r.code == 403
 
 
 @pytest.mark.gen_test
 async def test_tokens_renew(http_client, base_url, user):
-    r = await fetch(http_client, base_url, PATH['new_tokens'], 'POST', user)
+    r = await fetch(http_client, base_url, PATH['new_tokens'], 'POST',
+                    user['password_auth'])
     tokens = json.loads(r.body)
     del tokens['expires_in']
 
